@@ -1,0 +1,4 @@
+interface:
+  display_name: "Estimate Story Points"
+  short_description: "Estimate sprint story point effort"
+  default_prompt: "Use $story-points to estimate story points for this Jira ticket."

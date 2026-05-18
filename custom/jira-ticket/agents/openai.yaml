@@ -1,0 +1,4 @@
+interface:
+  display_name: "Jira Ticket"
+  short_description: "Draft and create one confirmed Jira ticket"
+  default_prompt: "Use $jira-ticket to turn these requirements into one Jira issue and confirm it before creation."

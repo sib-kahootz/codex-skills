@@ -1,0 +1,4 @@
+interface:
+  display_name: "Pull Request"
+  short_description: "Prepare, update, review, and publish GitHub pull requests safely."
+  default_prompt: "Use $pull-request to inspect branch work, update an existing PR when one exists, or draft a clear PR title/body with labels and reviewer testing focus guidance before publishing a draft PR by default."

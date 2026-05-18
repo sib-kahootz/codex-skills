@@ -1,0 +1,4 @@
+interface:
+  display_name: "CFDocs"
+  short_description: "Look up CFML tags and functions on CFDocs"
+  default_prompt: "Use $cfdocs to look up this CFML tag or function on CFDocs and summarize it."

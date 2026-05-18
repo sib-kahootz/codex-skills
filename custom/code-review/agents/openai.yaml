@@ -1,0 +1,4 @@
+interface:
+  display_name: "Code Review"
+  short_description: "Pre-PR branch review with findings, labels, verification, and readiness verdict."
+  default_prompt: "Use $code-review to review current changes or a named branch before opening a pull request, focusing on material bugs, risk, tests, suggested labels, and readiness."

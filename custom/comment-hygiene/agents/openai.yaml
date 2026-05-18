@@ -1,0 +1,4 @@
+interface:
+  display_name: "Comment Review"
+  short_description: "Add, rewrite, or remove code comments so they explain design intent, contracts, or constraints."
+  default_prompt: "Use $comment-review to improve comments in selected files or diffs, preserving code behavior while removing noise and adding explicit contracts, rationale, and invariants."
