@@ -1,13 +1,13 @@
 ---
 name: peer-review
-description: Run an multi-agent review of an existing GitHub pull request from a PR URL or ID using required GitHub and Jira context. Use when the user asks for peer review, parallel PR review, subagent PR review, multi-agent pull request review, merge readiness review, label review, read-only connector-first PR review when a local checkout is unavailable, or review comment drafting for an open PR. Coordinate subagents across PR/Jira context, diff correctness, security/accessibility/contracts, tests/verification, deployment risk, labels, and final merge verdict.
+description: Review an existing GitHub pull request from a PR URL or ID using GitHub and Jira context. Use when the user asks for peer review, PR review, merge readiness review, label review, read-only connector-first PR review when a local checkout is unavailable, review comment drafting for an open PR, or optional multi-agent review for broad or high-risk PRs. Assess PR/Jira context, diff correctness, security/accessibility/contracts, tests/verification, deployment risk, labels, and final merge verdict.
 ---
 
 # Peer Review
 
-Act as parent reviewer for an existing pull request. Use subagents for independent read-only evidence lanes, then synthesize a final review. Prioritize correctness, regressions, security, accessibility, API/data contracts, deployment risk, maintainability, and meaningful tests. Avoid style-only nitpicks, speculative rewrites, casual library suggestions, and empty praise.
+Act as reviewer for an existing pull request. Use subagents only for broad or high-risk reviews where independent read-only evidence lanes are likely to improve coverage enough to justify their token cost. Prioritize correctness, regressions, security, accessibility, API/data contracts, deployment risk, maintainability, and meaningful tests. Avoid style-only nitpicks, speculative rewrites, casual library suggestions, and empty praise.
 
-GitHub, Jira, and subagent capability are required. If GitHub or Jira is unavailable, say: `GitHub and Jira integrations are required for this review skill. I cannot run the full peer review without both.` Then stop. If subagents are unavailable, say: `Subagent capability is required for this peer review skill. Use $peer-review for a single-agent review instead.` Then stop.
+GitHub and Jira are required. If either is unavailable, say: `GitHub and Jira integrations are required for this review skill. I cannot run the full peer review without both.` Then stop. If subagents are unavailable or not worth the token cost, continue as a single-agent review and state that limitation in the report.
 
 ## Inputs
 
@@ -23,7 +23,7 @@ If the repository cannot be inferred for a PR number, ask for the repository. If
 Use one of two modes:
 
 - **Local-checkout mode:** Use when a matching local checkout is available and accessible. The parent may fetch review refs as described below, then inspect local diffs and optionally run safe local verification.
-- **Connector-first read-only mode:** Use when the user explicitly asks for no-fetch/no-mutation review, the local checkout cannot be found quickly, the checkout is outside the accessible workspace, or `gh`/`git fetch` is blocked. Use GitHub/Jira connector data only. Do not fetch refs, write files, change local repo state, run local tests, post comments, change labels, or mutate Jira/GitHub state. Give every subagent the same read-only connector workflow and report local checkout inspection plus local test execution as verification limitations.
+- **Connector-first read-only mode:** Use when the user explicitly asks for no-fetch/no-mutation review, the local checkout cannot be found quickly, the checkout is outside the accessible workspace, or `gh`/`git fetch` is blocked. Use GitHub/Jira connector data only. Do not fetch refs, write files, change local repo state, run local tests, post comments, change labels, or mutate Jira/GitHub state. If using subagents, give every subagent the same read-only connector workflow and report local checkout inspection plus local test execution as verification limitations.
 
 ## Parent Responsibilities
 
@@ -33,12 +33,12 @@ Keep these tasks in the parent agent:
 - In local-checkout mode only, fetch refs without disturbing user work; treat this as the only normal local repo-state mutation the skill permits before posting is confirmed.
 - In connector-first read-only mode, gather PR metadata, changed filenames, comments, checks, file contents, and patch/diff through connectors instead of local git commands.
 - Read shared reference files.
-- Spawn and coordinate subagents.
-- Review subagent evidence for duplication, conflicts, and unsupported claims.
+- Decide whether subagents are justified by review scope, risk, and token cost.
+- If subagents are used, spawn and coordinate read-only evidence lanes and review their evidence for duplication, conflicts, and unsupported claims.
 - Decide labels, final findings, verification summary, residual risk, and merge verdict.
 - Ask before posting any PR comment.
 
-Do not delegate final judgment. Do not let subagents mutate PR state, labels, branches, files, Jira, or comments.
+Do not delegate final judgment. If using subagents, do not let them mutate PR state, labels, branches, files, Jira, or comments.
 
 ## Workflow
 
@@ -102,11 +102,11 @@ In connector-first read-only mode:
 
 - Use GitHub connector PR metadata, changed filenames, full file fetches, and PR patch/diff.
 - Do not run `git fetch`, `git checkout`, `git diff`, local tests, formatters, build commands, or file-writing commands.
-- Do not ask subagents to resolve local repository paths or refs; give them connector-provided file lists, patch hunks, fetched file contents when available, comments, checks, and Jira context.
+- If using subagents, do not ask them to resolve local repository paths or refs; give them connector-provided file lists, patch hunks, fetched file contents when available, comments, checks, and Jira context.
 - Mark local checkout inspection and local test execution as verification limitations.
-- Still spawn read-only evidence lanes using connector-provided PR context and diff. Each lane prompt must explicitly say `Connector-first read-only mode: no fetch, no local checkout, no writes, no posting, no label or Jira changes.`
+- If subagents are justified, spawn read-only evidence lanes using connector-provided PR context and diff. Each lane prompt must explicitly say `Connector-first read-only mode: no fetch, no local checkout, no writes, no posting, no label or Jira changes.`
 
-Summarize PR intent, Jira requirements, changed areas, user-facing behavior, operational impact, and likely risk before spawning subagents.
+Summarize PR intent, Jira requirements, changed areas, user-facing behavior, operational impact, and likely risk before deep assessment or before spawning subagents.
 
 ### 3. Read Review References
 
@@ -117,13 +117,13 @@ Read these shared references before assessment:
 - `references/labels.md`
 - `references/verdict.md`
 - `references/report-template.md`
-- `references/subagent-briefs.md`
+- `references/subagent-briefs.md` only if using subagents
 
 Use the same severity, label, verdict, and report rules for parent and subagent work.
 
-### 4. Spawn Evidence Lanes
+### 4. Decide On Evidence Lanes
 
-Spawn independent subagents only after parent context and refs are known or connector-first context is assembled. Use `fork_context: false` where possible and pass only task-local context needed for the lane. Subagents must not fetch, checkout, write files, run formatters, post comments, change labels, update Jira, or mutate local repo state.
+Default to a single-agent review for small and medium PRs. Use independent subagents only when the PR is broad, high-risk, crosses several subsystems, or the user explicitly asks for parallel review. If using subagents, spawn them only after parent context and refs are known or connector-first context is assembled. Use `fork_context: false` where possible and pass only task-local context needed for the lane. Subagents must not fetch, checkout, write files, run formatters, post comments, change labels, update Jira, or mutate local repo state.
 
 In local-checkout mode, give each subagent the PR URL/number, repository path, base ref, review ref, Jira summary/acceptance criteria, changed-file list, and exact lane brief.
 
@@ -154,9 +154,9 @@ Lane prompts must instruct subagents to:
 - Report `No lane findings` when no material issue exists.
 - State what they did and did not verify.
 
-### 5. Continue Parent Work During Subagents
+### 5. Continue Assessment
 
-While subagents run, parent reviews labels and scans the highest-risk changed files. Do not duplicate a full lane; focus on integration risks, surprising diffs, and anything subagents are unlikely to see from their lane.
+Review labels and scan the highest-risk changed files. If subagents are running, do not duplicate a full lane; focus on integration risks, surprising diffs, and anything subagents are unlikely to see from their lane.
 
 Label review:
 
@@ -167,14 +167,14 @@ Label review:
 
 ### 6. Synthesize Findings
 
-Read all subagent outputs. Treat them as evidence, not final answers.
+If subagents were used, read all subagent outputs and treat them as evidence, not final answers.
 
 For each candidate finding:
 
 - Confirm the failure path against code/diff/Jira before reporting.
 - Merge duplicates.
 - Drop unsupported speculation.
-- Resolve conflicts between subagents.
+- Resolve conflicts between subagents, if any.
 - Prefer fewer sharp findings over broad commentary.
 - Include evidence, impact, suggested fix, and severity from `references/severity.md`.
 
@@ -192,9 +192,9 @@ If verification is blocked by dependencies, credentials, sandbox permissions, mi
 
 Use `references/report-template.md`. Choose one final verdict from `references/verdict.md`.
 
-Lead with the report. Include file and line references whenever possible. If no material findings exist, say that clearly and still report subagent coverage, label review, verification, and residual risk.
+Lead with the report. Include file and line references whenever possible. If no material findings exist, say that clearly and still report label review, verification, and residual risk.
 
-Include a short `Subagent coverage` section:
+If subagents were used, include a short `Subagent coverage` section:
 
 - lanes spawned
 - lanes skipped and why

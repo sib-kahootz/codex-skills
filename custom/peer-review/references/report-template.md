@@ -27,7 +27,7 @@ Include only substantive positives.
 
 # Subagent Coverage
 
-List lanes spawned, lanes skipped and why, outputs that changed final findings, and conflicts resolved by the parent reviewer.
+Include this section only when subagents were used. List lanes spawned, lanes skipped and why, outputs that changed final findings, and conflicts resolved by the parent reviewer.
 
 # Final Verdict
 

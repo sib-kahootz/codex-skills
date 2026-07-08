@@ -1,6 +1,6 @@
 ---
 name: repo-onboarding
-description: Build a practical onboarding brief for an unfamiliar code repository using parallel subagent evidence-gathering lanes with parent synthesis whenever subagent tools are available and permitted. Use when Codex should explore a repo, explain architecture, map directories and workflows, identify install/dev/build/test/lint/typecheck commands, summarize conventions, locate key files, explain data flow and integrations, identify risks and unknowns, or help a new contributor make a first safe change.
+description: Build a practical onboarding brief for an unfamiliar code repository, using optional parallel subagent evidence-gathering lanes only when repository size, scope, or risk justifies the token cost. Use when Codex should explore a repo, explain architecture, map directories and workflows, identify install/dev/build/test/lint/typecheck commands, summarize conventions, locate key files, explain data flow and integrations, identify risks and unknowns, or help a new contributor make a first safe change.
 ---
 
 # Repo Onboarding
@@ -9,7 +9,7 @@ Create an evidence-backed guide that helps a new contributor understand the repo
 
 Do not edit files unless the user explicitly asks for an onboarding document to be written.
 
-Default to orchestration: parent scopes the repo, spawns read-only evidence lanes when subagent tools are available and permitted, then synthesizes one brief. Parent should sample and verify; lanes should do most broad evidence gathering.
+Default to single-agent onboarding. Use read-only subagent evidence lanes only when the repository is large, unfamiliar, crosses several subsystems, or the user explicitly asks for parallel onboarding. Parent always scopes, samples, verifies, resolves conflicts, and synthesizes one brief.
 
 ## Workflow
 
@@ -21,7 +21,7 @@ Identify:
 - requested area, if any
 - current branch and dirty state
 - whether the user wants a chat brief or a file
-- whether subagent tools are available and permitted by current runtime/tool policy
+- whether subagent tools are available and permitted by current runtime/tool policy, if the scope appears broad enough to justify them
 
 Start with:
 
@@ -33,13 +33,13 @@ rg --files
 
 Use directory listings when `rg --files` is unavailable or when high-level structure is hard to see.
 
-Use parallel subagents for every repo-onboarding task whenever subagent tools are available and permitted by current runtime/tool policy. Do not merely offer parallel onboarding first. If subagents are unavailable or not permitted, continue single-agent and state that limitation in `## How This Was Assessed`.
+Default to single-agent assessment for small and medium repositories. Use parallel subagents only when the extra coverage is likely to justify the token cost. If subagents would help but are unavailable or not permitted, continue single-agent and state that limitation in `## How This Was Assessed`.
 
-Before spawning, define:
+Before spawning optional subagents, define:
 
 - shared constraints: repo root, dirty state, requested area, output type, safe command limits
 - non-overlapping lanes and which files/directories each lane should prioritize or avoid
-- parent task: keep working locally only on scoping, quick inventory, verification, conflict resolution, and final synthesis
+- parent task: keep working locally on scoping, quick inventory, verification, conflict resolution, and final synthesis
 
 ### 2. Read Evidence
 
@@ -116,7 +116,7 @@ If the user requested a specific area, tailor the first-change guide to that are
 
 ## Subagent Lanes
 
-Split repository exploration into independent map-building tasks and keep final synthesis in the parent agent. Spawn lanes for every repo-onboarding task when possible; default to two lanes, use three for large repos, and use four only for monorepos or explicit deep parallel review. For tiny repos or single-file questions, still spawn at least two narrow lanes when possible, such as docs/commands plus area-specific.
+Split repository exploration into independent map-building tasks only when optional subagents are justified. Keep final synthesis in the parent agent. Use two lanes for broad repos, three for large repos, and four only for monorepos or explicit deep parallel review. For tiny repos, single-file questions, or narrow subsystem requests, stay single-agent.
 
 Lane selection:
 
@@ -176,7 +176,7 @@ Use this structure unless asked otherwise:
 ## Risks And Unknowns
 ```
 
-Keep it skimmable. Cite exact files, directories, and commands. Distinguish verified facts from inference. In `## How This Was Assessed`, list lanes used, areas covered, coverage gaps, and whether subagents were unavailable or not permitted.
+Keep it skimmable. Cite exact files, directories, and commands. Distinguish verified facts from inference. In `## How This Was Assessed`, list areas covered, coverage gaps, whether subagents were used, and whether helpful subagents were unavailable or not permitted.
 
 ## Safety Rules
 
@@ -185,4 +185,4 @@ Keep it skimmable. Cite exact files, directories, and commands. Distinguish veri
 - Do not hide dirty worktree state.
 - Do not claim commands work unless run in this session or backed by explicit user-provided evidence.
 - If the repo is huge, sample intelligently: docs, manifests, entry points, changed/requested areas, and representative tests first.
-- Keep subagents read-only and do not let them create generated artifacts, run formatters, or mutate local, remote, service, or database state.
+- If using subagents, keep them read-only and do not let them create generated artifacts, run formatters, or mutate local, remote, service, or database state.

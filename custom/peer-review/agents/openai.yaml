@@ -1,4 +1,4 @@
 interface:
   display_name: "Peer Review"
-  short_description: "Run multi-agent review of an existing GitHub PR, including connector-first read-only mode."
-  default_prompt: "Use $peer-review to review an existing pull request from a PR URL or ID with subagent lanes, GitHub and Jira context, label review, verification, final merge verdict, and connector-first read-only mode when a local checkout is unavailable."
+  short_description: "Review an existing GitHub PR with GitHub/Jira context and optional parallel lanes."
+  default_prompt: "Use $peer-review to review an existing pull request from a PR URL or ID with GitHub and Jira context, label review, verification, final merge verdict, connector-first read-only mode when a local checkout is unavailable, and optional subagent lanes only when scope or risk justifies them."
