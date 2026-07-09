@@ -1,0 +1,4 @@
+interface:
+  display_name: "Hand-Drawn Explainer Images"
+  short_description: "Create illustrated explainer infographics"
+  default_prompt: "Use $hand-drawn-explainer-images to create a hand-drawn explainer image for this topic."
