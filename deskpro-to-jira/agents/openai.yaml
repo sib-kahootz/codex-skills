@@ -1,0 +1,4 @@
+interface:
+  display_name: "Deskpro to Jira"
+  short_description: "Turn Deskpro tickets into Jira tasks"
+  default_prompt: "Use $deskpro-to-jira to create a Jira task from this Deskpro ticket URL."
