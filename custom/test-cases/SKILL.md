@@ -7,7 +7,7 @@ description: Create tester-ready spreadsheet test cases, manual QA checklists, a
 
 Create practical manual test plans a human tester can execute without reading the code. Base the plan on implementation evidence first, then enrich with ticket, PR, or user context.
 
-Default to producing the generated test cases as a spreadsheet-compatible table. Create an `.xlsx` or `.csv` file when the user asks for a file; otherwise return a markdown table in chat using the same spreadsheet columns.
+Default to producing the generated test cases as a downloadable spreadsheet file. Create an `.xlsx` or `.csv` file when the user asks for a file. Otherwise, create a `.csv` file in a safe writable location and render the `Test Cases` section header as a markdown link to that file, followed by the same spreadsheet columns in chat only when useful for quick review.
 
 ## Workflow
 
@@ -133,7 +133,7 @@ Do not let agents produce overlapping generic cases. Parent agent owns deduplica
 
 ## Output Contract
 
-Use this structure unless the user asks for another format. Keep supporting context concise and make the spreadsheet table the primary deliverable:
+Use this structure unless the user asks for another format. Keep supporting context concise and make the downloadable spreadsheet the primary deliverable:
 
 ```markdown
 # Test Cases
@@ -158,12 +158,14 @@ Use this structure unless the user asks for another format. Keep supporting cont
 
 - ...
 
-## Test Cases
+## [Test Cases](</absolute/path/to/generated-test-cases.csv>)
 
 | Test Case ID | Feature | Test Case Description | Test Steps | Expected Result | Status | Comments |
 | --- | --- | --- | --- | --- | --- | --- |
 | TC-001 | ... | ... | 1. ...<br>2. ...<br>3. ... | ... | Not Run | Preconditions: ...<br>Notes: ... |
 ```
+
+If a spreadsheet file is generated, the `Test Cases` section header must link directly to it using a clickable local-file markdown link. If file creation is impossible in the current environment, state that gap clearly and fall back to the inline markdown table.
 
 Add sections for deployment checks, rollback checks, or exploratory notes only when the change needs them.
 
