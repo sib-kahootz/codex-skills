@@ -1,11 +1,11 @@
 ---
 name: new-branch
-description: Create a new Git branch from the latest master branch using a Jira ticket URL. Use when the user asks to create, switch to, or prepare a branch named from a Jira issue key and summary, especially from Jira URLs such as https://.../browse/PROJ-123.
+description: Create a new Git branch from an updated base branch using a Jira ticket URL, defaulting the base to master. Use when the user asks to create, switch to, or prepare a branch named from a Jira issue key and summary, especially from Jira URLs such as https://.../browse/PROJ-123.
 ---
 
 # New Branch
 
-Create a Git branch from the latest `origin/master` using the Jira issue key and summary.
+Create a Git branch from an updated base branch using the Jira issue key and summary. Use `master` unless the user provides another base branch.
 
 ## Workflow
 
@@ -20,7 +20,13 @@ Create a Git branch from the latest `origin/master` using the Jira issue key and
 python C:\Users\SimonBingham\.codex\skills\custom\new-branch\scripts\new_branch.py --jira-url "<jira-url>" --summary "<jira-summary>"
 ```
 
-4. Report the branch name created, or the existing branch that blocked creation.
+   When the user provides another base branch, pass it explicitly:
+
+```powershell
+python C:\Users\SimonBingham\.codex\skills\custom\new-branch\scripts\new_branch.py --jira-url "<jira-url>" --summary "<jira-summary>" --base-branch "<base-branch>"
+```
+
+4. Report the base branch used and the branch name created, or the existing branch that blocked creation.
 
 ## Branch Rules
 
@@ -44,4 +50,4 @@ Example:
 PROJ-123-add-user-authentication
 ```
 
-The script fetches `origin master`, checks local and remote branches for the same name, validates the final ref with `git check-ref-format`, and creates the new branch from `origin/master`.
+The script checks out the selected base branch, pulls it from `origin`, checks local and remote branches for the same name, validates the final ref with `git check-ref-format`, and creates the new branch from the updated local base branch.
