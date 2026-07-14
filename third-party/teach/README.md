@@ -4,4 +4,4 @@ Supports stateful teaching sessions inside a workspace, maintaining learning rec
 
 ## Source
 
-- Source: `https://github.com/mattpocock/skills`.
+- Source: `https://github.com/mattpocock/skills/tree/main/skills/productivity/teach`.

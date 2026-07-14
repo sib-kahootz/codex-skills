@@ -4,4 +4,4 @@ Writes a compact handoff document so a fresh agent can continue the current conv
 
 ## Source
 
-- Source: `https://github.com/mattpocock/skills/blob/main/skills/productivity/handoff/SKILL.md`.
+- Source: `https://github.com/mattpocock/skills/tree/main/skills/productivity/handoff`.

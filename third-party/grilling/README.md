@@ -4,4 +4,4 @@ Grill the user relentlessly about a plan or design. Use when the user wants to s
 
 ## Source
 
-- Source: `https://github.com/mattpocock/skills`.
+- Source: `https://github.com/mattpocock/skills/tree/main/skills/productivity/grilling`.
