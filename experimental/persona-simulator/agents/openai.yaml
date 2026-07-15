@@ -1,4 +1,0 @@
-interface:
-  display_name: "Persona Simulator"
-  short_description: "Simulate persona conversations, reactions, objections, and feedback."
-  default_prompt: "Use $persona-simulator to choose or compare predefined personas, role-play their likely reactions, and give persona-specific feedback on ideas, workflows, content, products, or features."
