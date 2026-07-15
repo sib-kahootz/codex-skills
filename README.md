@@ -27,21 +27,9 @@ skill-name/
 
 ## Installation
 
-Codex loads skills from the `skills/` directory under the Codex home folder. Clone this repository into that existing directory.
+Install this repository in the skills directory configured for your AI assistant or agent runtime. Refer to that runtime's documentation for the discovery path and refresh procedure.
 
-On Windows, the target folder is usually:
-
-```text
-%USERPROFILE%\.codex\skills
-```
-
-For a first-time install:
-
-```powershell
-git clone https://github.com/sib-kahootz/codex-skills.git $env:USERPROFILE\.codex\skills
-```
-
-To update an existing install, run `git pull` from the skills directory. Restart Codex or start a new session after installing or updating so the skill list is refreshed.
+To update an existing installation, run `git pull` from the skills directory, then refresh the runtime's skill list if required.
 
 ## Agent Instructions
 

@@ -15,16 +15,18 @@ Create a Git branch from an updated base branch using the Jira issue key and sum
    - Prefer an available Jira or Atlassian connector.
    - If no connector is available, use the workspace's existing Jira CLI or REST setup.
    - If the title cannot be retrieved, ask the user for the exact Jira summary before creating the branch.
-3. Run `scripts/new_branch.py` from the target Git repository with the Jira URL and summary:
+3. Resolve this skill's directory, then run `scripts/new_branch.py` from the target Git repository with the Jira URL and summary:
 
 ```powershell
-python C:\Users\SimonBingham\.codex\skills\custom\new-branch\scripts\new_branch.py --jira-url "<jira-url>" --summary "<jira-summary>"
+$skillRoot = "<path-to-new-branch-skill>"
+python "$skillRoot\scripts\new_branch.py" --jira-url "<jira-url>" --summary "<jira-summary>"
 ```
 
    When the user provides another base branch, pass it explicitly:
 
 ```powershell
-python C:\Users\SimonBingham\.codex\skills\custom\new-branch\scripts\new_branch.py --jira-url "<jira-url>" --summary "<jira-summary>" --base-branch "<base-branch>"
+$skillRoot = "<path-to-new-branch-skill>"
+python "$skillRoot\scripts\new_branch.py" --jira-url "<jira-url>" --summary "<jira-summary>" --base-branch "<base-branch>"
 ```
 
 4. Report the base branch used and the branch name created, or the existing branch that blocked creation.
