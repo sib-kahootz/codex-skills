@@ -50,7 +50,7 @@ Example root `AGENTS.md`:
 ```markdown
 ## Skills
 
-- For non-trivial coding or refactoring, use the `karpathy-guidelines` skill when it is available.
+- For non-trivial coding or refactoring, use the `karpathy-guidelines` and `ousterhout-comment-guidelines` skills when they are available.
 - Before choosing between materially different approaches, scopes, trade-offs, or outcomes, use the `grilling` skill when it is available.
 - Skip `grilling` when the choice is routine, low-risk and easily reversible, or already made explicitly by the user.
 - After using a skill from `skills/custom` or `skills/experimental`, suggest at most one concrete improvement to that skill, and only when the suggestion is genuinely worthwhile.
