@@ -1,6 +1,6 @@
 ---
 name: pull-request
-description: Prepare, review, update, push, and create GitHub pull requests from local branch work. Use when the user asks to open a PR, create a pull request, update an existing PR, prepare a draft PR, publish current branch work, push a branch for review, write or refresh a PR title/body, add reviewer testing focus guidance, assign the PR, choose or apply PR labels, or check PR readiness before publishing. When a pull request already exists for the branch, review and update that PR instead of creating a duplicate. Default to draft PRs unless the user explicitly asks for ready-for-review.
+description: Prepare, review, update, push, and create GitHub pull requests from local branch work. Use when the user asks to open a PR, create a pull request, update an existing PR, prepare a draft PR, publish current branch work, push a branch for review, write or refresh a PR title/body, add reviewer testing focus guidance, assign the PR, choose or apply PR tags, or check PR readiness before publishing. When a pull request already exists for the branch, review and update that PR instead of creating a duplicate. Default to draft PRs unless the user explicitly asks for ready-for-review.
 disable-model-invocation: true
 ---
 
@@ -21,7 +21,7 @@ PR documentation must describe the net change from the base branch to the head b
 - Do not modify code, tests, docs, assets, generated files, or config in the branch. This skill only inspects branch content and updates PR metadata after confirmation.
 - If readiness checks find problems, report them as blockers or risks; do not fix them unless the user stops using this skill and explicitly asks for code changes.
 - Do not push to an unexpected remote, base, or head branch.
-- Do not claim tests, PR body/title updates, labels, assignment, or publish state succeeded unless the tool confirms it.
+- Do not claim tests, PR body/title updates, tags, assignment, or publish state succeeded unless the tool confirms it.
 - If publishing fails after a push, report exactly what succeeded and what remains; do not risk duplicate PR creation without user approval.
 - If an existing PR is found, treat it as the target PR: review it, refresh stale metadata, and update it instead of creating another PR.
 
@@ -75,10 +75,10 @@ gh pr list --head <headBranch> --state open --json number,title,state,isDraft,ur
 When an existing PR is found:
 
 - Continue the workflow as an update to that PR, not as a new PR.
-- Compare the current PR title, body, base branch, labels, assignees, draft state, and reviewer guidance against the branch evidence.
+- Compare the current PR title, body, base branch, tags, assignees, draft state, and reviewer guidance against the branch evidence.
 - Preserve human-written PR content that is still accurate and relevant unless it is stale, misleading, duplicated, or contradicted by the current branch.
 - Refresh the PR body when the net `baseBranch...headBranch` diff makes the existing body stale, misleading, duplicated, or incomplete.
-- Refresh labels only when `references/labels.local.json` is available and its guidance indicates drift. Leave existing labels unchanged otherwise.
+- Refresh tags only when `references/tags.local.json` is available and its guidance indicates drift. Leave existing tags unchanged otherwise.
 - Mention any base branch mismatch and ask before changing base.
 - Do not close, reopen, mark ready, or convert to draft unless the user explicitly asks or confirms.
 
@@ -113,7 +113,7 @@ Inspect local PR guidance before drafting:
 - test/build config and package scripts
 - nearby code and tests for changed areas
 
-Find Jira keys in branch name, commits, changed paths, and user text. If Jira tools are available, read summary, acceptance criteria, status, labels/components/fix versions, relevant comments, and linked issues.
+Find Jira keys in branch name, commits, changed paths, and user text. If Jira tools are available, read summary, acceptance criteria, status, tags/components/fix versions, relevant comments, and linked issues.
 
 ### 4. Check Readiness
 
@@ -157,19 +157,19 @@ Body must include:
 - risks and impacts, including unverified areas
 - a `TODO Items` section when newly added TODOs are present, with one unchecked Markdown checkbox per TODO item
 
-If `references/labels.local.json` exists, read and validate it before proposing labels. Use only labels and meanings supplied by that file, then prepare:
+If `references/tags.local.json` exists, read and validate it before proposing tags. Use only tags and meanings supplied by that file, then prepare:
 
-- labels to apply
-- labels that may need confirmation
-- labels intentionally not applied despite related-looking changes, when that helps avoid confusion
+- tags to apply
+- tags that may need confirmation
+- tags intentionally not applied despite related-looking changes, when that helps avoid confusion
 
-If the file is absent or invalid, do not propose, add, remove, or otherwise change labels. State that label configuration was not supplied and leave existing PR labels unchanged. Do not treat any label as required without local configuration.
+If the file is absent or invalid, do not propose, add, remove, or otherwise change tags. State that tag configuration was not supplied and leave existing PR tags unchanged. Do not treat any tag as required without local configuration.
 
 For an existing PR, produce an update proposal with:
 
 - current PR URL and state
 - title/body changes to apply, or "no title/body change needed" with reason
-- labels to add/remove and labels to leave unchanged
+- tags to add/remove and tags to leave unchanged
 - assignee changes to apply or leave unchanged
 - checks/tests newly run and checks/tests still unverified
 - deployment, migration, release, and risk notes required by the current `baseBranch...headBranch` diff
@@ -183,7 +183,7 @@ Show the user:
 - draft or ready-for-review state
 - title
 - full body
-- labels, or `not configured` when `references/labels.local.json` is absent or invalid
+- tags, or `not configured` when `references/tags.local.json` is absent or invalid
 - assignee, defaulting to current GitHub user when discoverable
 - tests and checks run
 - deployment steps
@@ -199,9 +199,9 @@ Good splits:
 
 - Readiness agent: inspect diffs for accidental files, missing tests, migrations, generated assets, drift, and release risk.
 - PR draft agent: draft or refresh title/body from branch evidence, templates, Jira context, deployment notes, and reviewer focus.
-- Labels and verification agent: inspect label guidance, assignee assumptions, runnable checks, and unverified areas.
+- Tags and verification agent: inspect tag guidance, assignee assumptions, runnable checks, and unverified areas.
 
-Do not let agents stage, commit, push, edit PRs, change labels, or publish. Parent agent owns confirmation, branch push, PR creation/update, and final verified state.
+Do not let agents stage, commit, push, edit PRs, change tags, or publish. Parent agent owns confirmation, branch push, PR creation/update, and final verified state.
 
 ### 7. Publish Or Update
 
@@ -215,7 +215,7 @@ With `gh`, prefer body files for body updates:
 gh pr edit <prUrlOrNumber> --title "<title>" --body-file <bodyFile>
 ```
 
-Only edit fields that need to change. When a valid `references/labels.local.json` was supplied and label changes were confirmed, add and remove labels explicitly:
+Only edit fields that need to change. When a valid `references/tags.local.json` was supplied and tag changes were confirmed, add and remove tags explicitly. GitHub CLI calls these labels:
 
 ```bash
 gh pr edit <prUrlOrNumber> --add-label "label-a,label-b"
@@ -250,14 +250,14 @@ Resolve current GitHub user when assigning:
 gh api user --jq .login
 ```
 
-Then apply assignment and, only when a valid `references/labels.local.json` was supplied and label changes were confirmed, labels when supported:
+Then apply assignment and, only when a valid `references/tags.local.json` was supplied and tag changes were confirmed, tags when supported. GitHub CLI calls these labels:
 
 ```bash
 gh pr edit <prUrlOrNumber> --add-assignee <currentGitHubLogin>
 gh pr edit <prUrlOrNumber> --add-label "bug,NEED migrate step"
 ```
 
-If labels or assignment fail, report the intended values for manual application.
+If tags or assignment fail, report the intended values for manual application.
 
 ## Final Response
 
@@ -267,7 +267,7 @@ Report concisely:
 - base and head branch
 - whether the PR was newly created or an existing PR was updated
 - assignee applied or still needed
-- labels applied or still needed
+- tags applied or still needed
 - tests/checks run and not verified
 - reviewer testing focus included
 - deployment steps included
