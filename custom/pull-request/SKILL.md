@@ -78,7 +78,7 @@ When an existing PR is found:
 - Compare the current PR title, body, base branch, labels, assignees, draft state, and reviewer guidance against the branch evidence.
 - Preserve human-written PR content that is still accurate and relevant unless it is stale, misleading, duplicated, or contradicted by the current branch.
 - Refresh the PR body when the net `baseBranch...headBranch` diff makes the existing body stale, misleading, duplicated, or incomplete.
-- Refresh labels only when `references/labels.local.json` is available and its guidance indicates drift. Leave existing labels unchanged otherwise.
+- Refresh labels when applicable repository labels and the branch evidence indicate drift. Leave accurate existing labels unchanged.
 - Mention any base branch mismatch and ask before changing base.
 - Do not close, reopen, mark ready, or convert to draft unless the user explicitly asks or confirms.
 
@@ -157,13 +157,19 @@ Body must include:
 - risks and impacts, including unverified areas
 - a `TODO Items` section when newly added TODOs are present, with one unchecked Markdown checkbox per TODO item
 
-If `references/labels.local.json` exists, read and validate it before proposing labels. Use only labels and meanings supplied by that file, then prepare:
+Derive a short list of likely label terms from the net diff, such as the change type, affected component, platform, or release impact. Search only those candidate terms in the repository. With `gh`, run one command per term:
+
+```bash
+gh label list --search "<candidate-term>" --limit 20
+```
+
+Do not enumerate all repository labels or use broad searches. Infer only labels that clearly describe the net `baseBranch...headBranch` change. Use the label name and, where helpful, its description to resolve ambiguous meanings. Then prepare:
 
 - labels to apply
 - labels that may need confirmation
 - labels intentionally not applied despite related-looking changes, when that helps avoid confusion
 
-If the file is absent or invalid, do not propose, add, remove, or otherwise change labels. State that label configuration was not supplied and leave existing PR labels unchanged. Do not treat any label as required without local configuration.
+Do not invent labels or treat any label as required. If no relevant repository label exists, state that and leave labels unchanged. For an existing PR, remove a label only when it is clearly stale or inaccurate for the current net diff; otherwise preserve it.
 
 For an existing PR, produce an update proposal with:
 
@@ -183,7 +189,7 @@ Show the user:
 - draft or ready-for-review state
 - title
 - full body
-- labels, or `not configured` when `references/labels.local.json` is absent or invalid
+- labels to add, remove, and leave unchanged, with a short rationale; or `no relevant repository labels` when none apply
 - assignee, defaulting to current GitHub user when discoverable
 - tests and checks run
 - deployment steps
@@ -215,7 +221,7 @@ With `gh`, prefer body files for body updates:
 gh pr edit <prUrlOrNumber> --title "<title>" --body-file <bodyFile>
 ```
 
-Only edit fields that need to change. When a valid `references/labels.local.json` was supplied and label changes were confirmed, add and remove labels explicitly:
+Only edit fields that need to change. When confirmed, add and remove labels that were selected from the repository's available labels explicitly:
 
 ```bash
 gh pr edit <prUrlOrNumber> --add-label "label-a,label-b"
@@ -250,7 +256,7 @@ Resolve current GitHub user when assigning:
 gh api user --jq .login
 ```
 
-Then apply assignment and, only when a valid `references/labels.local.json` was supplied and label changes were confirmed, labels when supported:
+Then apply assignment and confirmed labels selected from the repository when supported:
 
 ```bash
 gh pr edit <prUrlOrNumber> --add-assignee <currentGitHubLogin>
